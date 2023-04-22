@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import '../models/category.dart';
+import '../models/category_filter.dart';
 
 class CocktailRepository {
   final String apiUrl;
@@ -9,13 +9,13 @@ class CocktailRepository {
 
   CocktailRepository(this.apiUrl);
 
-  Future<List<Category>> fetchDrinkCategories() async {
+  Future<List<CategoryFilter>> fetchDrinkCategories() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['drinks'];
 
-      return data.map((json) => Category.fromJson(json)).toList();
+      return data.map((json) => CategoryFilter.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load drink categories');
     }
