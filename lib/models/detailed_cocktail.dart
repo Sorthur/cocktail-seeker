@@ -77,6 +77,6 @@ class DetailedCocktail {
   @override
   String toString() {
     String ingredientsStr = ingredients.join(', ');
-    return 'id: $id \n name: $name \n ingredients: $ingredientsStr';
+    return 'id: $id \nname: $name \ningredients: $ingredientsStr';
   }
 }
