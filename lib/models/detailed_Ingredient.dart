@@ -1,5 +1,5 @@
 class DetailedIngredient {
-  Int id;
+  int id;
   String name;
   String decsription;
   String type;
@@ -9,7 +9,7 @@ class DetailedIngredient {
   DetailedIngredient({
     required this.id,
     required this.name,
-    required this.description,
+    required this.decsription,
     required this.type,
     required this.alcohol,
     required this.abv,

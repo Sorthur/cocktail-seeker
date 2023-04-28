@@ -1,7 +1,7 @@
 class Cocktail {
   String name;
   String image;
-  Int id;
+  int id;
 
   Cocktail({
     required this.name,
