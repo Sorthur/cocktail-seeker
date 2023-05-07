@@ -1,4 +1,9 @@
-class CategoryFilter {
+// ignore_for_file: overridden_fields
+
+import 'filter.dart';
+
+class CategoryFilter extends Filter {
+  @override
   String name;
 
   CategoryFilter({required this.name});
@@ -7,10 +12,5 @@ class CategoryFilter {
     return CategoryFilter(
       name: json['strCategory'],
     );
-  }
-
-  @override
-  String toString() {
-    return name;
   }
 }
