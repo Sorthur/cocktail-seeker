@@ -1,4 +1,3 @@
-import 'package:cocktail_seeker/repositories/cocktail_repository.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -50,12 +49,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  CocktailRepository repo = CocktailRepository(
-      'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list');
 
   Future<void> _incrementCounter() async {
-    var tmp = (await repo.fetchDrinkCategories()).join(' - ');
-    debugPrint(tmp);
     setState(() {
       _counter++;
     });

@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:cocktail_seeker/models/detailed_cocktail.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../models/category_filter.dart';
+import '../models/filters/category_filter.dart';
 
 class CocktailRepository {
   final String apiUrl;
