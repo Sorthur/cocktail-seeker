@@ -1,5 +1,5 @@
 class DetailedIngredient {
-  int id;
+  String id;
   String name;
   String decsription;
   String type;
