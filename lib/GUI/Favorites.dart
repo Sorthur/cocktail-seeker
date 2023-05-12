@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cocktail_seeker/GUI/DrinkList.dart';
 
+import '../models/cocktail.dart';
+import '../models/filters/category_filter.dart';
+import '../models/filters/filter.dart';
+
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
   @override
   State<Favorites> createState() => FavoritesState();
 }
 class FavoritesState extends State<Favorites> {
+
+  List<Cocktail> cocktailList = [];
 
   List<MyListItem> items = [
     MyListItem(filter: 'Element 1', parameter: 'Opis elementu 1'),
@@ -115,7 +121,7 @@ class FavoritesState extends State<Favorites> {
                       padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
                       child: MaterialButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const DrinkList()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: cocktailList)));
                         },
                         color: const Color(0xff3a57e8),
                         elevation: 0,

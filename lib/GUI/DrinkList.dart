@@ -1,27 +1,28 @@
 import 'package:cocktail_seeker/GUI/DrinkDetails.dart';
+import 'package:cocktail_seeker/models/cocktail.dart';
 import 'package:flutter/material.dart';
 
+import '../repositories/cocktail_repository.dart';
+
 class DrinkList extends StatefulWidget {
-  const DrinkList({super.key});
+  final List<Cocktail> cocktailList;
+  const DrinkList({super.key, required this.cocktailList});
 
   @override
   State<DrinkList> createState() => _DrinkListState();
 }
 
 class _DrinkListState extends State<DrinkList> {
-  List<Drinks> drink = [
-    Drinks(name: 'Element 1', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 2', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 3', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 4', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 5', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 6', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 7', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 8', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 9', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 10', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-    Drinks(name: 'Element 11', link: 'https://www.thecocktaildb.com/images/media/drink/yyrwty1468877498.jpg'),
-  ];
+
+  late List<Cocktail> _cocktailList;
+  @override
+  void initState() {
+    super.initState();
+    _cocktailList = widget.cocktailList;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -67,7 +68,7 @@ class _DrinkListState extends State<DrinkList> {
               mainAxisSpacing: 8,
               childAspectRatio: 0.8,
             ),
-              children: drink.map((item) {
+              children: _cocktailList.map((item) {
                 return Stack(
                   alignment: Alignment.bottomCenter,
                   children: [
@@ -76,7 +77,7 @@ class _DrinkListState extends State<DrinkList> {
                       child:
                       Image(
                         image: NetworkImage(
-                            item.link),
+                            item.image),
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
                         fit: BoxFit.cover,
@@ -87,7 +88,6 @@ class _DrinkListState extends State<DrinkList> {
                       margin: const EdgeInsets.all(0),
                       padding: const EdgeInsets.all(0),
                       width: 200,
-                      height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: const Color(0x000b0a0a),
                         shape: BoxShape.rectangle,
@@ -99,7 +99,7 @@ class _DrinkListState extends State<DrinkList> {
                         margin: const EdgeInsets.all(0),
                         padding: const EdgeInsets.all(0),
                         width: 200,
-                        height: 40,
+                        constraints: const BoxConstraints.tightFor(height: 80),
                         decoration: BoxDecoration(
                           color: const Color(0x800b0a0a),
                           shape: BoxShape.rectangle,
@@ -117,7 +117,7 @@ class _DrinkListState extends State<DrinkList> {
                             style: const TextStyle(
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
-                              fontSize: 10,
+                              fontSize: 20,
                               color: Color(0xffffffff),
                             ),
                           ),
@@ -149,7 +149,7 @@ class _DrinkListState extends State<DrinkList> {
                         child: const Text(
                           "Show",
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 16,
                             fontWeight: FontWeight.w600,
                             fontStyle: FontStyle.normal,
                           ),
@@ -163,13 +163,6 @@ class _DrinkListState extends State<DrinkList> {
         )
     );
   }
-}
-
-class Drinks {
-  final String name;
-  final String link;
-
-  Drinks({required this.name, required this.link});
 }
 
 

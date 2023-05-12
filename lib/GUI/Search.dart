@@ -1,7 +1,9 @@
 import 'package:cocktail_seeker/GUI/DrinkList.dart';
 import 'package:flutter/material.dart';
 
+import '../models/cocktail.dart';
 import '../models/filters/filter.dart';
+import '../repositories/cocktail_repository.dart';
 import '../repositories/filter_repository.dart';
 
 class Search extends StatefulWidget {
@@ -13,9 +15,11 @@ class Search extends StatefulWidget {
 class SearchState extends State<Search> {
 
   var filterRepository = FilterRepository();
-
-  final _filterList = ["Category", "Alcohol", "Glass", "Ingredient"];
   List<Filter> _listforList = [];
+  var cocktailRepository = CocktailRepository();
+  List<Cocktail> _cocktailList = [];
+
+  final _filterList = ["None", "Category", "Alcohol", "Glass", "Ingredient"];
   String? _selectedValFilter = "";
   Filter? _selectedValList;
   List<DropdownMenuItem<Filter>> lista = [];
@@ -23,20 +27,29 @@ class SearchState extends State<Search> {
   Future<List<Filter>> getList(String? value) async {
     if(value == "Category"){
       _listforList = await filterRepository.getCategoryFilters();
+      _selectedValList = _listforList[0];
+      lista = getItems();
     } else if(value == "Alcohol"){
       _listforList = await filterRepository.getAlcoholicFilters();
+      _selectedValList = _listforList[0];
+      lista = getItems();
     }else if(value == "Glass"){
       _listforList = await filterRepository.getGlassFilters();
+      _selectedValList = _listforList[0];
+      lista = getItems();
     } else if(value == "Ingredient"){
       _listforList = await filterRepository.getIngredientFilters();
+      _selectedValList = _listforList[0];
+      lista = getItems();
+    } else {
+      lista.clear();
     }
-    _selectedValList = _listforList[0];
-    lista = getItems();
 
     return List.empty();
   }
 
   List <DropdownMenuItem<Filter>> getItems(){
+    lista.clear();
 
     if(_listforList == null || _listforList.isEmpty){
       return List.empty();
@@ -46,6 +59,13 @@ class SearchState extends State<Search> {
       );
     });
     return lista;
+  }
+
+
+
+  Future<List<Cocktail>> getCocktailList() async {
+    _cocktailList = await cocktailRepository.getCocktailsByFilter(_selectedValList!);
+    return List.empty();
   }
 
   SearchState(){
@@ -263,8 +283,9 @@ class SearchState extends State<Search> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     MaterialButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList()));
+                      onPressed: () async {
+                        await getCocktailList();
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: _cocktailList)));
                       },
                       color: const Color(0xff3a57e8),
                       elevation: 1,
