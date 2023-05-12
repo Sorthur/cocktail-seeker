@@ -1,37 +1,45 @@
 import 'dart:convert';
-import 'package:cocktail_seeker/models/detailed_cocktail.dart';
+
+import 'package:cocktail_seeker/configuration/api_constants.dart';
+import 'package:cocktail_seeker/models/cocktail.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/filters/alcoholic_filter.dart';
 import '../models/filters/category_filter.dart';
+import '../models/filters/filter.dart';
+import '../models/filters/glass_filter.dart';
+import '../models/filters/ingredient_filter.dart';
 
 class CocktailRepository {
-  final String apiUrl;
-  T? cast<T>(x) => x is T ? x : null;
-
-  CocktailRepository(this.apiUrl);
-
-  /// Only sample method for test purposes
-  Future<List<CategoryFilter>> fetchDrinkCategories() async {
-    final response = await http.get(Uri.parse(apiUrl));
+  Future<List<Cocktail>> getCocktailsByFilter(Filter filter) async {
+    var endpoint = _getEndpointByFilterType(filter);
+    final response = await http
+        .get(Uri.parse('${ApiConstants.baseUrl}/$endpoint${filter.name}'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['drinks'];
-
-      return data.map((json) => CategoryFilter.fromJson(json)).toList();
+      return data.map((json) => Cocktail.fromJson(json)).toList();
     } else {
-      throw Exception('Failed to load drink categories');
+      throw Exception('Failed to load cocktails');
     }
   }
 
-  /// Only sample method for test purposes
-  Future<DetailedCocktail> fetchDetailedCocktail() async {
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['drinks'];
-      return data.map((json) => DetailedCocktail.fromJson(json)).first;
-    } else {
-      throw Exception('Failed to load detailed cocktail');
+  String _getEndpointByFilterType(Filter filter) {
+    switch (filter.runtimeType) {
+      case AlcoholicFilter:
+        return ApiConstants.cocktailByAlcoholicEndpoint;
+      case CategoryFilter:
+        return ApiConstants.cocktailByCategoryEndpoint;
+      case GlassFilter:
+        return ApiConstants.cocktailByGlassEndpoint;
+      case IngredientFilter:
+        return ApiConstants.cocktailByIngredientEndpoint;
+      default:
+        throw Exception('Filter type not recognized');
     }
   }
+
+  Future<Cocktail> getCocktailsById(int id) async =>
+      throw Exception('Not implemented');
 }

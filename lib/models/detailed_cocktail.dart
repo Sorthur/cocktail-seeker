@@ -3,7 +3,7 @@ class DetailedCocktail {
   String name;
   String? alternateName;
   String? tags;
-  String? video; // string?
+  String? video;
   String? category;
   String? alcoholic;
   String? glass;
