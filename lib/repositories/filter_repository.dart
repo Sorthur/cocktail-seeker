@@ -8,21 +8,17 @@ import '../models/filters/alcoholic_filter.dart';
 import '../models/filters/filter.dart';
 
 class FilterRepository {
-  Future<List<AlcoholicFilter>> getAlcoholicFilters() async {
-    return _getFilters<AlcoholicFilter>(ApiConstants.alcoholicListEndpoint);
-  }
+  Future<List<AlcoholicFilter>> getAlcoholicFilters() async =>
+      _getFilters<AlcoholicFilter>(ApiConstants.alcoholicListEndpoint);
 
-  Future<List<CategoryFilter>> getCategoryFilters() async {
-    return _getFilters<CategoryFilter>(ApiConstants.categoryListEndpoint);
-  }
+  Future<List<CategoryFilter>> getCategoryFilters() async =>
+      _getFilters<CategoryFilter>(ApiConstants.categoryListEndpoint);
 
-  Future<List<GlassFilter>> getGlassFilters() async {
-    return _getFilters<GlassFilter>(ApiConstants.glassListEndpoint);
-  }
+  Future<List<GlassFilter>> getGlassFilters() async =>
+      _getFilters<GlassFilter>(ApiConstants.glassListEndpoint);
 
-  Future<List<IngredientFilter>> getIngredientFilters() async {
-    return _getFilters<IngredientFilter>(ApiConstants.ingredientListEndpoint);
-  }
+  Future<List<IngredientFilter>> getIngredientFilters() async =>
+      _getFilters<IngredientFilter>(ApiConstants.ingredientListEndpoint);
 
   Future<List<T>> _getFilters<T extends Filter>(String filterEndpoint) async {
     final response =
