@@ -1,6 +1,9 @@
 import 'package:cocktail_seeker/GUI/DrinkList.dart';
 import 'package:flutter/material.dart';
 
+import '../models/filters/filter.dart';
+import '../repositories/filter_repository.dart';
+
 class Search extends StatefulWidget {
   const Search({super.key});
   @override
@@ -9,15 +12,45 @@ class Search extends StatefulWidget {
 
 class SearchState extends State<Search> {
 
-  SearchState(){
-    _selectedValFilter = _FilterList[0];
-    _selectedValList = _ListforList[0];
+  var filterRepository = FilterRepository();
+
+  final _filterList = ["Category", "Alcohol", "Glass", "Ingredient"];
+  List<Filter> _listforList = [];
+  String? _selectedValFilter = "";
+  Filter? _selectedValList;
+  List<DropdownMenuItem<Filter>> lista = [];
+
+  Future<List<Filter>> getList(String? value) async {
+    if(value == "Category"){
+      _listforList = await filterRepository.getCategoryFilters();
+    } else if(value == "Alcohol"){
+      _listforList = await filterRepository.getAlcoholicFilters();
+    }else if(value == "Glass"){
+      _listforList = await filterRepository.getGlassFilters();
+    } else if(value == "Ingredient"){
+      _listforList = await filterRepository.getIngredientFilters();
+    }
+    _selectedValList = _listforList[0];
+    lista = getItems();
+
+    return List.empty();
   }
 
-  final _FilterList = ["Category", "Alcohol", "Glass", "Ingredient"];
-  List<String> _ListforList = ["Ordinary Drink", "Cocktail", "Shake", "Other / Unknown", "Cocoa", "Shot", "Coffee / Tea", "Homemade Liqueur", "Punch / Party Drink", "Beer", "Soft Drink"];
-  String? _selectedValFilter = "";
-  String? _selectedValList = "";
+  List <DropdownMenuItem<Filter>> getItems(){
+
+    if(_listforList == null || _listforList.isEmpty){
+      return List.empty();
+    }
+    _listforList.forEach((element){
+      lista.add(DropdownMenuItem(value: element, child: Text(element.toString()))
+      );
+    });
+    return lista;
+  }
+
+  SearchState(){
+    _selectedValFilter = _filterList[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +168,7 @@ class SearchState extends State<Search> {
                         ),
                         child: DropdownButton(
                           value: _selectedValFilter,
-                          items: _FilterList
+                          items: _filterList
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -148,7 +181,8 @@ class SearchState extends State<Search> {
                             fontWeight: FontWeight.w500,
                             fontStyle: FontStyle.normal,
                           ),
-                          onChanged: (value) {
+                          onChanged: (value) async {
+                            await getList(value);
                             setState(() {
                               _selectedValFilter = value as String;
                             });
@@ -198,13 +232,7 @@ class SearchState extends State<Search> {
                         ),
                         child: DropdownButton(
                           value: _selectedValList,
-                          items: _ListforList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                          items: lista,
                           style: const TextStyle(
                             color: Color(0xff000000),
                             fontSize: 16,
@@ -213,7 +241,7 @@ class SearchState extends State<Search> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              _selectedValList = value as String;
+                              _selectedValList = value;
                             });
                           },
                           icon: const Icon(Icons.expand_more),
