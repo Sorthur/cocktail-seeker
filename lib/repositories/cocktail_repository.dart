@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cocktail_seeker/configuration/api_constants.dart';
 import 'package:cocktail_seeker/models/cocktail.dart';
+import 'package:cocktail_seeker/models/detailed_cocktail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,6 +41,14 @@ class CocktailRepository {
     }
   }
 
-  Future<Cocktail> getCocktailsById(int id) async =>
-      throw Exception('Not implemented');
+  Future<DetailedCocktail> getDetailedCocktailById(int id) async {
+    final response = await http.get(Uri.parse(
+        '${ApiConstants.baseUrl}/${ApiConstants.cocktailEndpoint}$id'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['drinks'];
+      return data.map((json) => DetailedCocktail.fromJson(json)).first;
+    } else {
+      throw Exception('Failed to load detailed cocktail');
+    }
+  }
 }

@@ -22,7 +22,7 @@ class FilterRepository {
 
   Future<List<T>> _getFilters<T extends Filter>(String filterEndpoint) async {
     final response =
-        await http.get(Uri.parse(ApiConstants.baseUrl + filterEndpoint));
+        await http.get(Uri.parse('${ApiConstants.baseUrl}/$filterEndpoint'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['drinks'];
