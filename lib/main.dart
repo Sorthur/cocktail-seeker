@@ -1,6 +1,11 @@
+import 'package:cocktail_seeker/models/cocktail.dart';
+import 'package:cocktail_seeker/repositories/db_repository.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  final dbRepo = DbRepository();
+  await dbRepo.getDb();
+
   runApp(const MyApp());
 }
 
