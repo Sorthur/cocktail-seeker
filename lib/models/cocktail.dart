@@ -16,4 +16,17 @@ class Cocktail {
       image: json['strDrinkThumb'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'image': image,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Cocktail{id: $id, name: $name, image: $image}';
+  }
 }
