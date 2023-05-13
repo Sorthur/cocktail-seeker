@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cocktail_seeker/configuration/api_constants.dart';
 import 'package:cocktail_seeker/models/cocktail.dart';
+import 'package:cocktail_seeker/models/detailed_cocktail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
