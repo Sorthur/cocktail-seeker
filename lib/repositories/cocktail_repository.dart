@@ -40,6 +40,14 @@ class CocktailRepository {
     }
   }
 
-  Future<Cocktail> getCocktailsById(int id) async =>
-      throw Exception('Not implemented');
+  Future<DetailedCocktail> getDetailedCocktailById(int id) async {
+    final response = await http.get(Uri.parse(
+        '${ApiConstants.baseUrl}/${ApiConstants.cocktailEndpoint}$id'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['drinks'];
+      return data.map((json) => DetailedCocktail.fromJson(json)).first;
+    } else {
+      throw Exception('Failed to load detailed cocktail');
+    }
+  }
 }
