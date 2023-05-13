@@ -25,4 +25,9 @@ class DetailedIngredient {
       abv: json['strABV'],
     );
   }
+
+  @override
+  String toString() {
+    return 'id: $id \nname: $name';
+  }
 }
