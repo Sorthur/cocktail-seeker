@@ -1,8 +1,13 @@
 import 'package:cocktail_seeker/GUI/IngredientDetails.dart';
 import 'package:flutter/material.dart';
 
+import '../models/detailed_cocktail.dart';
+import '../models/detailed_ingredient.dart';
+import '../repositories/ingredient_repository.dart';
+
 class DrinkDetails extends StatefulWidget {
-  const DrinkDetails({super.key});
+  final DetailedCocktail detailedCocktail;
+  const DrinkDetails({super.key, required this.detailedCocktail});
 
   @override
   State<DrinkDetails> createState() => _DrinkDetailsState();
@@ -10,36 +15,48 @@ class DrinkDetails extends StatefulWidget {
 
 class _DrinkDetailsState extends State<DrinkDetails> {
 
-  String name = "Drink";
-  String image = "https://www.thecocktaildb.com/images/media/drink/sqxsxp1478820236.jpg";
-  String category = "Punch / Party Drink";
-  String glass = "Brandy snifter";
-  bool alcohol = true;
-  String description = "Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, "
-  "graphic or web designs. The passage is attributed to an unknown typesetter in the 15th "
-  "century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.";
+  late DetailedCocktail _detailedCocktail;
+  @override
+  void initState() {
+    super.initState();
+    _detailedCocktail = widget.detailedCocktail;
+  }
 
-  List<Ingredients> ingredient = [
-    Ingredients(name: 'Element 1', amount: '1 oz'),
-    Ingredients(name: 'Element 2', amount: '2 oz'),
-    Ingredients(name: 'Element 3', amount: '3 oz'),
-    Ingredients(name: 'Element 4', amount: '4 oz'),
-    Ingredients(name: 'Element 5', amount: '5 oz'),
-    Ingredients(name: 'Element 6', amount: '6 oz'),
-    Ingredients(name: 'Element 7', amount: '7 oz'),
-    Ingredients(name: 'Element 8', amount: '8 oz'),
-    Ingredients(name: 'Element 9', amount: '9 oz'),
-    Ingredients(name: 'Element 10', amount: '10 oz'),
-    Ingredients(name: 'Element 11', amount: '11 oz'),
-  ];
+  DetailedIngredient? _detailedIngredient;
+  var ingredientRepository = IngredientRepository();
+
+  Future<DetailedIngredient?> getIngredient(String name) async {
+    _detailedIngredient = await ingredientRepository.getIngredientByName(name);
+    return _detailedIngredient;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    String name = _detailedCocktail.name;
+    String? image = _detailedCocktail.thumbUrl;
+    String? category = _detailedCocktail.category;
+    String? glass = _detailedCocktail.glass;
+    bool alcohol;
+
+    if(_detailedCocktail.alcoholic == "Alcoholic"){
+      alcohol = true;
+    }else{
+      alcohol = false;
+    }
+
+    String? description = _detailedCocktail.instructions;
+    List<Ingredients> ingredient = [];
+
+    for (var i=0; i< _detailedCocktail.ingredients.length; i++) {
+      ingredient.add(Ingredients(name: _detailedCocktail.ingredients[i], amount: _detailedCocktail.measures[i]));
+    }
+
     return WillPopScope(
         onWillPop: () async {
           return false;
         },
-        child: Scaffold(
+        child: SafeArea ( child: Scaffold(
           backgroundColor: const Color(0xffffffff),
           appBar: AppBar(
             elevation: 4,
@@ -104,7 +121,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                   padding: const EdgeInsets.all(16),
                   child:
                   Image(
-                    image: NetworkImage(image),
+                    image: NetworkImage(image!),
                     height:
                     MediaQuery.of(context).size.height * 0.35000000000000003,
                     width: MediaQuery.of(context).size.width,
@@ -132,7 +149,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          category,
+                          category!,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -187,7 +204,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          glass,
+                          glass!,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -241,7 +258,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                         alignment: Alignment.center,
                         margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
                         padding: const EdgeInsets.all(0),
-                        width: 100,
+                        width: 150,
                         decoration: BoxDecoration(
                           color: const Color(0xbefba808),
                           shape: BoxShape.rectangle,
@@ -281,9 +298,15 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                             Expanded(
                               flex: 1,
                               child: MaterialButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const IngredientDetails()));
-                                },
+                                onPressed: () async {
+                                  await getIngredient(item.name);
+                                  if(_detailedIngredient != null) {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(builder: (context) =>
+                                            IngredientDetails(
+                                                detailedIngredient: _detailedIngredient!)));
+                                  }
+                                  },
                                 color: const Color(0xff3a57e8),
                                 elevation: 0,
                                 shape: const RoundedRectangleBorder(
@@ -292,14 +315,14 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                                       bottomRight: Radius.circular(12.0)),
                                 ),
                                 padding:
-                                const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                                const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
                                 textColor: const Color(0xffffffff),
-                                minWidth: 100,
+                                minWidth: 150,
                                 child: Text(
                                   item.name,
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w800,
                                     fontStyle: FontStyle.normal,
                                   ),
                                 ),
@@ -314,7 +337,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Text(
-                    description,
+                    description!,
                     textAlign: TextAlign.left,
                     overflow: TextOverflow.clip,
                     style: const TextStyle(
@@ -328,6 +351,7 @@ class _DrinkDetailsState extends State<DrinkDetails> {
               ],
             ),
           ),
+        ),
         )
     );
   }

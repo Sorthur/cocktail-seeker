@@ -61,8 +61,6 @@ class SearchState extends State<Search> {
     return lista;
   }
 
-
-
   Future<List<Cocktail>> getCocktailList() async {
     _cocktailList = await cocktailRepository.getCocktailsByFilter(_selectedValList!);
     return List.empty();
