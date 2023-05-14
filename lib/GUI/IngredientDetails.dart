@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../models/detailed_ingredient.dart';
+
 class IngredientDetails extends StatefulWidget {
-  const IngredientDetails({super.key});
+  final DetailedIngredient detailedIngredient;
+  const IngredientDetails({super.key, required this.detailedIngredient});
 
   @override
   State<IngredientDetails> createState() => _IngredientDetailsState();
@@ -9,20 +12,33 @@ class IngredientDetails extends StatefulWidget {
 
 class _IngredientDetailsState extends State<IngredientDetails> {
 
-  String name = "Ingredient";
-  String type = "Syrup";
-  bool alcohol = true;
-  String description = "Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, "
-      "graphic or web designs. The passage is attributed to an unknown typesetter in the 15th "
-      "century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book.";
+  late DetailedIngredient _detailedIngredient;
+  @override
+  void initState() {
+    super.initState();
+    _detailedIngredient = widget.detailedIngredient;
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    String name = _detailedIngredient.name;
+    String type = _detailedIngredient.type;
+    bool alcohol;
+
+    if(_detailedIngredient.alcohol == "Yes"){
+      alcohol = true;
+    }else{
+      alcohol = false;
+    }
+
+    String description = _detailedIngredient.description;
+
     return WillPopScope(
         onWillPop: () async {
           return false;
         },
-        child: Scaffold(
+        child: SafeArea ( child:  Scaffold(
           backgroundColor: const Color(0xffffffff),
           appBar: AppBar(
             elevation: 4,
@@ -157,6 +173,7 @@ class _IngredientDetailsState extends State<IngredientDetails> {
               ],
             ),
           ),
+        ),
         )
     );
   }

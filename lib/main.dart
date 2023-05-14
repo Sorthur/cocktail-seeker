@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Coctail Seeker',
-      home: Home(title: 'Coctail Seeker Home Page'),
+      home: SafeArea(child: Home(title: 'Coctail Seeker Home Page')) ,
     );
   }
 }
