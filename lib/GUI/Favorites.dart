@@ -2,31 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:cocktail_seeker/GUI/DrinkList.dart';
 
 import '../models/cocktail.dart';
-import '../models/filters/category_filter.dart';
+import '../models/favourite_query.dart';
 import '../models/filters/filter.dart';
+import '../repositories/cocktail_repository.dart';
+import '../repositories/db_repository.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
   @override
   State<Favorites> createState() => FavoritesState();
 }
+
 class FavoritesState extends State<Favorites> {
 
-  List<Cocktail> cocktailList = [];
+  var dbRepository = DbRepository();
+  List<FavouriteQuery> items = [];
 
-  List<MyListItem> items = [
-    MyListItem(filter: 'Element 1', parameter: 'Opis elementu 1'),
-    MyListItem(filter: 'Element 2', parameter: 'Opis elementu 2'),
-    MyListItem(filter: 'Element 3', parameter: 'Opis elementu 3'),
-    MyListItem(filter: 'Element 4', parameter: 'Opis elementu 4'),
-    MyListItem(filter: 'Element 5', parameter: 'Opis elementu 5'),
-    MyListItem(filter: 'Element 6', parameter: 'Opis elementu 6'),
-    MyListItem(filter: 'Element 7', parameter: 'Opis elementu 7'),
-    MyListItem(filter: 'Element 8', parameter: 'Opis elementu 8'),
-    MyListItem(filter: 'Element 9', parameter: 'Opis elementu 9'),
-    MyListItem(filter: 'Element 10', parameter: 'Opis elementu 10'),
-    MyListItem(filter: 'Element 11', parameter: 'Opis elementu 11'),
-  ];
+  Future<List<FavouriteQuery>> getFavoritesList() async {
+    var test = await dbRepository.getFavouriteQueries();
+    setState(() {
+      items = test;
+    });
+    return items;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getFavoritesList();
+  }
+
+  var cocktailRepository = CocktailRepository();
+  List<Cocktail> _cocktailList = [];
+
+  Future<List<Cocktail>> getCocktailList(Filter filter) async {
+    _cocktailList = await cocktailRepository.getCocktailsByFilter(filter);
+    return _cocktailList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +85,7 @@ class FavoritesState extends State<Favorites> {
                           ),
                         ),
                         Text(
-                          item.filter,
+                          item.filterType!,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -98,7 +110,7 @@ class FavoritesState extends State<Favorites> {
                           ),
                         ),
                         Text(
-                          item.parameter,
+                          item.filterName!,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -120,8 +132,9 @@ class FavoritesState extends State<Favorites> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
                       child: MaterialButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: cocktailList)));
+                        onPressed: () async {
+                          await getCocktailList(item.filter!);
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: _cocktailList)));
                         },
                         color: const Color(0xff3a57e8),
                         elevation: 0,
@@ -150,6 +163,7 @@ class FavoritesState extends State<Favorites> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     setState(() {
+                      dbRepository.removeById(item.id);
                       items.remove(item);
                     });
                   },
@@ -163,12 +177,5 @@ class FavoritesState extends State<Favorites> {
       ),
     );
   }
-}
-
-class MyListItem {
-  final String filter;
-  final String parameter;
-
-  MyListItem({required this.filter, required this.parameter});
 }
 

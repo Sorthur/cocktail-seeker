@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/cocktail.dart';
 import '../models/filters/filter.dart';
 import '../repositories/cocktail_repository.dart';
+import '../repositories/db_repository.dart';
 import '../repositories/filter_repository.dart';
 
 class Search extends StatefulWidget {
@@ -18,6 +19,7 @@ class SearchState extends State<Search> {
   List<Filter> _listforList = [];
   var cocktailRepository = CocktailRepository();
   List<Cocktail> _cocktailList = [];
+  var dbRepository = DbRepository();
 
   final _filterList = ["None", "Category", "Alcohol", "Glass", "Ingredient"];
   String? _selectedValFilter = "";
@@ -63,7 +65,7 @@ class SearchState extends State<Search> {
 
   Future<List<Cocktail>> getCocktailList() async {
     _cocktailList = await cocktailRepository.getCocktailsByFilter(_selectedValList!);
-    return List.empty();
+    return _cocktailList;
   }
 
   SearchState(){
@@ -308,7 +310,22 @@ class SearchState extends State<Search> {
                       padding: const EdgeInsets.fromLTRB(40, 0, 0, 0),
                       child: IconButton(
                         icon: const Icon(Icons.favorite_border),
-                        onPressed: () {},
+                        onPressed: () async {
+                          if(_selectedValList != null) {
+                            if(!(await dbRepository.favouriteQueryExists(
+                                _selectedValList!))){
+                              await dbRepository.insertFavouriteQuery(
+                                  _selectedValList!);
+                            } else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Already in the database'),
+                                  duration: Duration(milliseconds: 1500), //
+                                ),
+                              );
+                            }
+                          }
+                        },
                         color: const Color(0xff212435),
                         iconSize: 40,
                       ),
