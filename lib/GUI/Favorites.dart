@@ -3,6 +3,8 @@ import 'package:cocktail_seeker/GUI/DrinkList.dart';
 
 import '../models/cocktail.dart';
 import '../models/favourite_query.dart';
+import '../models/filters/filter.dart';
+import '../repositories/cocktail_repository.dart';
 import '../repositories/db_repository.dart';
 
 class Favorites extends StatefulWidget {
@@ -30,7 +32,13 @@ class FavoritesState extends State<Favorites> {
     getFavoritesList();
   }
 
-  List<Cocktail> cocktailList = [];
+  var cocktailRepository = CocktailRepository();
+  List<Cocktail> _cocktailList = [];
+
+  Future<List<Cocktail>> getCocktailList(Filter filter) async {
+    _cocktailList = await cocktailRepository.getCocktailsByFilter(filter);
+    return _cocktailList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +132,9 @@ class FavoritesState extends State<Favorites> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 40, 0, 20),
                       child: MaterialButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: cocktailList)));
+                        onPressed: () async {
+                          await getCocktailList(item.filter!);
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> DrinkList(cocktailList: _cocktailList)));
                         },
                         color: const Color(0xff3a57e8),
                         elevation: 0,
